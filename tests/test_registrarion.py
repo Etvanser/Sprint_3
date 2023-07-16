@@ -2,31 +2,43 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import random
-from locators import NAME_INPUT, EMAIL_INPUT, PASSWORD_INPUT, REG_BUTTON, LOG_IN_BUTTON, PROFILE_BUTTON, REG_TEXT_BUTTON
-def test_registration_passed(generic_email, generic_password, driver_chrome):
-    driver_chrome.get('https://stellarburgers.nomoreparties.site/')
+from locators import Locators
+from helpers import generic_password, generic_email
 
-    driver_chrome.find_element(*PROFILE_BUTTON).click()
-    driver_chrome.find_element(*REG_TEXT_BUTTON).click()
-    driver_chrome.find_element(*NAME_INPUT).send_keys("Александр")
-    driver_chrome.find_element(*EMAIL_INPUT).send_keys(generic_email)
-    driver_chrome.find_element(*PASSWORD_INPUT).send_keys(generic_password)
-    driver_chrome.find_element(*REG_BUTTON).click()
-    WebDriverWait(driver_chrome, 3).until(expected_conditions.visibility_of_element_located((LOG_IN_BUTTON)))
-    assert "/login" in driver_chrome.current_url
-    driver_chrome.quit()
 
-def test_registration_fail_password(generic_email, driver_chrome):
-    driver_chrome.get('https://stellarburgers.nomoreparties.site/')
+def test_registration_passed(driver_chrome):
+    email = generic_email()
+    password = generic_password()
 
-    driver_chrome.find_element(*PROFILE_BUTTON).click()
-    driver_chrome.find_element(*REG_TEXT_BUTTON).click()
-    driver_chrome.find_element(*NAME_INPUT).send_keys("Александр")
-    driver_chrome.find_element(*EMAIL_INPUT).send_keys(generic_email)
-    driver_chrome.find_element(*PASSWORD_INPUT).send_keys(random.randint(10000, 99999))
-    driver_chrome.find_element(*REG_BUTTON).click()
-    WebDriverWait(driver_chrome, 3).until(
-        expected_conditions.visibility_of_element_located((REG_BUTTON)))
-    error = driver_chrome.find_element(By.CLASS_NAME, "input__error.text_type_main-default").text
+    driver = driver_chrome
+    driver.get('https://stellarburgers.nomoreparties.site/')
+
+    driver.find_element(*Locators.PROFILE_BUTTON).click()
+    driver.find_element(*Locators.REG_TEXT_BUTTON).click()
+    driver.find_element(*Locators.NAME_INPUT).send_keys("Александр")
+    driver.find_element(*Locators.EMAIL_INPUT).send_keys(email)
+    driver.find_element(*Locators.PASSWORD_INPUT).send_keys(password)
+    driver.find_element(*Locators.REG_BUTTON).click()
+    WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(Locators.LOG_IN_BUTTON))
+    driver.find_element(*Locators.EMAIL_INPUT).send_keys(email)
+    driver.find_element(*Locators.PASSWORD_INPUT).send_keys(password)
+    driver.find_element(*Locators.LOG_IN_BUTTON).click()
+    WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(Locators.PLACE_ORDER_BUTTON))
+    button_order = driver.find_element(*Locators.PLACE_ORDER_BUTTON).text
+    assert button_order == 'Оформить заказ'
+
+
+def test_registration_fail_password(driver_chrome):
+    driver = driver_chrome
+    driver.get('https://stellarburgers.nomoreparties.site/')
+
+    driver.find_element(*Locators.PROFILE_BUTTON).click()
+    driver.find_element(*Locators.REG_TEXT_BUTTON).click()
+    driver.find_element(*Locators.NAME_INPUT).send_keys("Александр")
+    driver.find_element(*Locators.EMAIL_INPUT).send_keys(generic_email())
+    driver.find_element(*Locators.PASSWORD_INPUT).send_keys(random.randint(10000, 99999))
+    driver.find_element(*Locators.REG_BUTTON).click()
+    WebDriverWait(driver, 3).until(
+        expected_conditions.visibility_of_element_located(Locators.REG_BUTTON))
+    error = driver.find_element(By.CLASS_NAME, "input__error.text_type_main-default").text
     assert error == 'Некорректный пароль'
-    driver_chrome.quit()

@@ -1,14 +1,13 @@
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from locators import PROFILE_BUTTON, EXIT_BUTTON
+from locators import Locators
 
-def test_click_exit_button_in_profile_passed(driver_chrome, log_in):
-    driver_chrome = log_in
-    driver_chrome.find_element(*PROFILE_BUTTON).click()
-    WebDriverWait(driver_chrome, 3).until(expected_conditions.visibility_of_element_located((EXIT_BUTTON)))
-    driver_chrome.find_element(*EXIT_BUTTON).click()
-    WebDriverWait(driver_chrome, 3).until(expected_conditions.visibility_of_element_located((By.XPATH, ".//h2[contains(text(),'Вход')]")))
-    login_text = driver_chrome.find_element(By.XPATH, ".//h2[contains(text(),'Вход')]").text
+
+def test_click_exit_button_in_profile_passed(log_in):
+    log_on = log_in
+    log_on.find_element(*Locators.PROFILE_BUTTON).click()
+    WebDriverWait(log_on, 3).until(expected_conditions.visibility_of_element_located(Locators.EXIT_BUTTON))
+    log_on.find_element(*Locators.EXIT_BUTTON).click()
+    WebDriverWait(log_on, 3).until(expected_conditions.visibility_of_element_located(Locators.HEADING_TEXT_LOG_IN))
+    login_text = log_on.find_element(*Locators.HEADING_TEXT_LOG_IN).text
     assert login_text == 'Вход'
-    driver_chrome.quit()

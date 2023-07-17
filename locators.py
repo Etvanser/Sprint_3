@@ -5,6 +5,7 @@ class Locators:
 
     PROFILE_BUTTON = By.LINK_TEXT, 'Личный Кабинет' # Кнопка личного кабинета
     REG_TEXT_BUTTON = By.LINK_TEXT, 'Зарегистрироваться' # Кнопка ссылка "Зарегистрироваться"
+    INVALID_PASSWORD_TEXT = By.CLASS_NAME, "input__error.text_type_main-default"
     NAME_INPUT = By.XPATH, ".//label[contains(text(),'Имя')]/parent::div/input" # Поле ввода Имени
     EMAIL_INPUT = By.XPATH, ".//label[contains(text(),'Email')]/parent::div/input" # Поле ввода email
     PASSWORD_INPUT = By.XPATH, ".//input[@name='Пароль']" # Поле ввода пароля
